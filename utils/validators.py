@@ -46,14 +46,32 @@ def validate_email(value: str) -> str:
 
 def validate_date(value: str) -> str:
     """날짜 형식(YYYY-MM-DD)을 검증한다."""
-    return ''  # TODO: 구현 예정
+    value = value.strip()
+    if not value:
+        return '날짜를 입력해주세요.'
+    if not re.match(r'^\d{4}-\d{2}-\d{2}$', value):
+        return '날짜는 YYYY-MM-DD 형식이어야 합니다. (예: 2026-01-01)'
+    try:
+        import datetime
+        datetime.datetime.strptime(value, '%Y-%m-%d')
+        return ''
+    except ValueError:
+        return '존재하지 않는 날짜입니다.'
 
 
 def validate_content(value: str) -> str:
     """영업일지 내용 필수 입력을 검증한다."""
-    return ''  # TODO: 구현 예정
+    value = value.strip()
+    if not value:
+        return '영업일지 내용을 입력해주세요.'
+    return ''
 
 
 def validate_report_id(value: str) -> str:
-    """보고서 ID 형식을 검증한다."""
-    return ''  # TODO: 구현 예정
+    """보고서 ID 형식을 검증한다. 형식: R001, R002 등"""
+    value = value.strip()
+    if not value:
+        return '보고서 ID를 입력해주세요.'
+    if not re.match(r'^R\d{3}$', value):
+        return '보고서 ID는 "R" 뒤에 숫자 3자리여야 합니다. (예: R001)'
+    return ''

@@ -8,6 +8,12 @@ from customer_service import (
     delete_customer,
     search_customers,
 )
+from sales_report_service import (
+    create_report,
+    list_reports,
+    get_report,
+    update_report,
+)
 
 
 def print_menu():
@@ -117,6 +123,75 @@ def run_customer_menu():
             print('잘못된 선택입니다.')
 
 
+def print_report_menu():
+    """영업일지 관리 서브메뉴를 출력한다."""
+    print('\n' + '-' * 40)
+    print('       영업일지 관리')
+    print('-' * 40)
+    print(' 1. 영업일지 등록')
+    print(' 2. 영업일지 목록')
+    print(' 3. 영업일지 상세 조회')
+    print(' 4. 영업일지 수정')
+    print(' 0. 돌아가기')
+    print('-' * 40)
+
+
+def run_report_menu():
+    """영업일지 관리 서브메뉴를 실행한다."""
+    while True:
+        print_report_menu()
+        choice = input('선택: ').strip()
+
+        if choice == '0':
+            break
+        elif choice == '1':
+            report_id = input('보고서 ID: ').strip()
+            customer_id = input('고객사 ID: ').strip()
+            date = input('영업일자 (YYYY-MM-DD): ').strip()
+            content = input('영업내용: ').strip()
+            result = create_report(report_id, customer_id, date, content)
+            if result['success']:
+                print(f'등록 완료: {result["data"]["report_id"]}')
+            else:
+                print(f'오류: {result["error"]}')
+        elif choice == '2':
+            result = list_reports()
+            if result['success']:
+                reports = result['data']
+                if not reports:
+                    print('등록된 영업일지가 없습니다.')
+                else:
+                    print(f'\n전체 영업일지 ({len(reports)}건)')
+                    for r in reports:
+                        print(f'  {r["report_id"]} | {r["customer_id"]} | '
+                              f'{r["date"]} | {r["status"]}')
+            else:
+                print(f'오류: {result["error"]}')
+        elif choice == '3':
+            report_id = input('보고서 ID: ').strip()
+            result = get_report(report_id)
+            if result['success']:
+                r = result['data']
+                print(f'\n보고서 ID: {r["report_id"]}')
+                print(f'고객사 ID: {r["customer_id"]}')
+                print(f'영업일자: {r["date"]}')
+                print(f'영업내용: {r["content"]}')
+                print(f'상태: {r["status"]}')
+            else:
+                print(f'오류: {result["error"]}')
+        elif choice == '4':
+            report_id = input('보고서 ID: ').strip()
+            date = input('새 영업일자 (YYYY-MM-DD): ').strip()
+            content = input('새 영업내용: ').strip()
+            result = update_report(report_id, date, content)
+            if result['success']:
+                print(f'수정 완료: {result["data"]["report_id"]}')
+            else:
+                print(f'오류: {result["error"]}')
+        else:
+            print('잘못된 선택입니다.')
+
+
 def main():
     """CLI 메인 진입점"""
     print('Smart Sales CLI를 시작합니다.')
@@ -130,6 +205,8 @@ def main():
             break
         elif choice == '1':
             run_customer_menu()
+        elif choice == '2':
+            run_report_menu()
         else:
             print(f'선택한 메뉴: {choice} (아직 구현되지 않음)')
 
