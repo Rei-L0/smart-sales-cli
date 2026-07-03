@@ -14,6 +14,12 @@ from sales_report_service import (
     get_report,
     update_report,
 )
+from approval_service import (
+    submit_report,
+    approve_report,
+    reject_report,
+    withdraw_report,
+)
 
 
 def print_menu():
@@ -192,6 +198,63 @@ def run_report_menu():
             print('잘못된 선택입니다.')
 
 
+def print_approval_menu():
+    """결재 관리 서브메뉴를 출력한다."""
+    print('\n' + '-' * 40)
+    print('       결재 관리')
+    print('-' * 40)
+    print(' 1. 결재 상신 (DRAFT → SUBMITTED)')
+    print(' 2. 승인 (SUBMITTED → APPROVED)')
+    print(' 3. 반려 (SUBMITTED → REJECTED)')
+    print(' 4. 결재 철회 (SUBMITTED → DRAFT)')
+    print(' 0. 돌아가기')
+    print('-' * 40)
+
+
+def run_approval_menu():
+    """결재 관리 서브메뉴를 실행한다."""
+    while True:
+        print_approval_menu()
+        choice = input('선택: ').strip()
+
+        if choice == '0':
+            break
+        elif choice == '1':
+            report_id = input('보고서 ID: ').strip()
+            result = submit_report(report_id)
+            if result['success']:
+                print(f'결재 상신 완료: {result["data"]["report_id"]} '
+                      f'({result["data"]["status"]})')
+            else:
+                print(f'오류: {result["error"]}')
+        elif choice == '2':
+            report_id = input('보고서 ID: ').strip()
+            result = approve_report(report_id)
+            if result['success']:
+                print(f'승인 완료: {result["data"]["report_id"]} '
+                      f'({result["data"]["status"]})')
+            else:
+                print(f'오류: {result["error"]}')
+        elif choice == '3':
+            report_id = input('보고서 ID: ').strip()
+            result = reject_report(report_id)
+            if result['success']:
+                print(f'반려 완료: {result["data"]["report_id"]} '
+                      f'({result["data"]["status"]})')
+            else:
+                print(f'오류: {result["error"]}')
+        elif choice == '4':
+            report_id = input('보고서 ID: ').strip()
+            result = withdraw_report(report_id)
+            if result['success']:
+                print(f'결재 철회 완료: {result["data"]["report_id"]} '
+                      f'({result["data"]["status"]})')
+            else:
+                print(f'오류: {result["error"]}')
+        else:
+            print('잘못된 선택입니다.')
+
+
 def main():
     """CLI 메인 진입점"""
     print('Smart Sales CLI를 시작합니다.')
@@ -207,6 +270,8 @@ def main():
             run_customer_menu()
         elif choice == '2':
             run_report_menu()
+        elif choice == '3':
+            run_approval_menu()
         else:
             print(f'선택한 메뉴: {choice} (아직 구현되지 않음)')
 
